@@ -1,9 +1,9 @@
 // @TODO: YOUR CODE HERE!
 var svgWidth = 960;
-var svgHeight = 500;
+var svgHeight = 600;
 
 var margin = {
-  top: 20,
+  top: 30,
   right: 40,
   bottom: 80,
   left: 100
@@ -15,7 +15,7 @@ var height = svgHeight - margin.top - margin.bottom;
 // Create an SVG wrapper, append an SVG group that will hold our chart,
 // and shift the latter by left and top margins.
 var svg = d3
-  .select(".scatter")
+  .select("#scatter")
   .append("svg")
   .attr("width", svgWidth)
   .attr("height", svgHeight);
@@ -84,7 +84,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
   circlesGroup.call(toolTip);
 
   circlesGroup.on("mouseover", function(data) {
-    toolTip.show(data);
+    toolTip.show(data, this);
   })
     // onmouseout event
     .on("mouseout", function(data, index) {
@@ -146,7 +146,7 @@ d3.csv("data.csv").then(function(stateData, err) {
     .attr("y", 20)
     .attr("value", "income") // value to grab for event listener
     .classed("active", true)
-    .text("Mediam State Income");
+    .text("Median State Income");
 
   var healthcareLabel = labelsGroup.append("text")
     .attr("x", 0)
