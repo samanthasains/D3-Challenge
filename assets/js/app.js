@@ -1,12 +1,12 @@
 // @TODO: YOUR CODE HERE!
 var svgWidth = 1200;
-var svgHeight = 600;
+var svgHeight = 800;
 
 var margin = {
   top: 30,
   right: 40,
   bottom: 80,
-  left: 100
+  left: 60
 };
 
 var width = svgWidth - margin.left - margin.right;
@@ -31,8 +31,8 @@ var chosenXAxis = "income";
 function xScale(stateData, chosenXAxis) {
   // create scales
   var xLinearScale = d3.scaleLinear()
-    .domain([d3.min(stateData, d => d[chosenXAxis]) * 0.8,
-      d3.max(stateData, d => d[chosenXAxis]) * 1.2
+    .domain([d3.min(stateData, d => d[chosenXAxis]) * .95,
+      d3.max(stateData, d => d[chosenXAxis]) * 1.05
     ])
     .range([0, width]);
 
@@ -121,7 +121,7 @@ d3.csv("data.csv").then(function(stateData, err) {
 
   // Create y scale function
   var yLinearScale = d3.scaleLinear()
-    .domain([0, d3.max(stateData, d => d.healthcare)])
+    .domain([d3.min(stateData, d => d.healthcare)*.8, d3.max(stateData, d => d.healthcare)])
     .range([height, 0]);
 
   // Create initial axis functions
