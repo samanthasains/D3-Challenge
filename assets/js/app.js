@@ -79,7 +79,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
   var label;
 
   if (chosenXAxis === "income") {
-    label = "Median State Income: ";
+    label = "Median State Income: $";
   }
   else {
     label = "% of Population in Poverty:";
@@ -89,7 +89,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
     .attr("class", "d3-tip")
     .offset([80, -60])
     .html(function(d) {
-      return (`${d.abbr}<br>${label} ${d[chosenXAxis]}`);
+      return (`${d.state}<br>${label} ${d[chosenXAxis]}<br>% of Population Without Healthcare: ${d.healthcare}%`);
     });
 
   circlesGroup.call(toolTip);
@@ -144,24 +144,23 @@ d3.csv("data.csv").then(function(stateData, err) {
     .enter()
     .append("g")
 
-  // append initial circles
+  // append circles
   var circles = circlesGroup.append("circle")
     .attr("class", "dot")
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
     .attr("cy", d => yLinearScale(d.healthcare))
     .attr("r", 13)
-    .attr("fill", "blue")
+    .attr("fill", "lightblue")
     .attr("opacity", ".5");
 
-    //append text
-    var texts = circlesGroup.append("text")
-      .attr("dx", function(d){return})
-      .text(function(d){return d.abbr})
-      .attr("x", d => xLinearScale(d[chosenXAxis]))
-      .attr("y", d => yLinearScale(d.healthcare)+5)
-      .attr('color', 'white')
-      .attr('font-size', 10)
-      .style("text-anchor", "middle")
+  //append text
+  var texts = circlesGroup.append("text")
+    .attr("dx", function(d){return})
+    .text(function(d){return d.abbr})
+    .attr("x", d => xLinearScale(d[chosenXAxis]))
+    .attr("y", d => yLinearScale(d.healthcare)+5)
+    .attr('font-size', 13)
+    .style("text-anchor", "middle")
 
   // Create group for two x-axis labels
   var labelsGroup = chartGroup.append("g")
