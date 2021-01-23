@@ -71,7 +71,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
     label = "Median State Income: ";
   }
   else {
-    label = "[TEST] # of Albums:";
+    label = "% of Population in Poverty:";
   }
 
   var toolTip = d3.tip()
@@ -102,6 +102,7 @@ d3.csv("data.csv").then(function(stateData, err) {
   stateData.forEach(function(data) {
     data.income = +data.income;
     data.healthcare = +data.healthcare;
+    data.poverty = + data.poverty;
   });
 
   // xLinearScale function above csv import
@@ -126,6 +127,12 @@ d3.csv("data.csv").then(function(stateData, err) {
   chartGroup.append("g")
     .call(leftAxis);
 
+    // mystery
+    let simulation = d3.forceSimulation()
+    .force('x', d3.forceX(width/2).strength(0.5))
+    .force('y', d3.forceY(height/2).strength(0.5))
+    .force('collide', d3.forceCollide((data) => { return r(data.healthcare) + 1.5; }))
+
   // append initial circles
   var circlesGroup = chartGroup.selectAll("circle")
     .data(stateData)
@@ -136,6 +143,31 @@ d3.csv("data.csv").then(function(stateData, err) {
     .attr("r", 20)
     .attr("fill", "pink")
     .attr("opacity", ".5");
+
+  // append text
+  var texts = svg.selectAll(null)
+    .data(stateData)
+    .enter()
+    .append('text')
+    .text(d => d.abbr)
+    .attr('color', 'black')
+    .attr('font-size', 15);
+
+  // Reposition text on bubbles
+  let ticked = () => {
+    circlesGroup.attr('cx', (data) => {
+            return data.x
+        })
+        .attr('cy', (data) => {
+            return data.y
+        });
+
+    texts.attr('x', (data) => {
+            return data.x
+        })
+        .attr('y', (data) => {
+            return data.y});
+}
 
   // Create group for two x-axis labels
   var labelsGroup = chartGroup.append("g")
@@ -148,12 +180,12 @@ d3.csv("data.csv").then(function(stateData, err) {
     .classed("active", true)
     .text("Median State Income");
 
-  var healthcareLabel = labelsGroup.append("text")
+  var povertyLabel = labelsGroup.append("text")
     .attr("x", 0)
     .attr("y", 40)
-    .attr("value", "healthcare") // value to grab for event listener
+    .attr("value", "poverty") // value to grab for event listener
     .classed("inactive", true)
-    .text("% of Population With Healthcare");
+    .text("% of Population in Poverty");
 
   // append y axis
   chartGroup.append("text")
@@ -194,7 +226,7 @@ d3.csv("data.csv").then(function(stateData, err) {
 
         // changes classes to change bold text
         if (chosenXAxis === "healthcare") {
-          healthcareLabel
+          povertyLabel
             .classed("active", true)
             .classed("inactive", false);
           incomeLabel
@@ -202,7 +234,7 @@ d3.csv("data.csv").then(function(stateData, err) {
             .classed("inactive", true);
         }
         else {
-          healthcareLabel
+          povertyLabel
             .classed("active", false)
             .classed("inactive", true);
           incomeLabel
