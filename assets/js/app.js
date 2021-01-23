@@ -1,5 +1,5 @@
 // @TODO: YOUR CODE HERE!
-var svgWidth = 960;
+var svgWidth = 1200;
 var svgHeight = 600;
 
 var margin = {
@@ -127,11 +127,30 @@ d3.csv("data.csv").then(function(stateData, err) {
   chartGroup.append("g")
     .call(leftAxis);
 
-    // mystery
-    let simulation = d3.forceSimulation()
-    .force('x', d3.forceX(width/2).strength(0.5))
-    .force('y', d3.forceY(height/2).strength(0.5))
-    .force('collide', d3.forceCollide((data) => { return r(data.healthcare) + 1.5; }))
+    // // mystery
+    // let simulation = d3.forceSimulation()
+    // .force('x', d3.forceX(width/2).strength(0.5))
+    // .force('y', d3.forceY(height/2).strength(0.5))
+    // .force('collide', d3.forceCollide((data) => { return r(data.healthcare) + 1.5; }))
+      /* Define the data for the circles */
+      // var elem = svg.selectAll("g myCircleText")
+      //     .data(stateData)
+    
+      // /*Create and place the "blocks" containing the circle and the text */  
+      // var elemEnter = elem.enter() //this is chartGroup?
+      //   .append("g")
+      //   .attr("transform", function(d){return "translate("+d.x+",80)"})
+   
+      // /*Create the circle for each block */
+      // var circle = elemEnter.append("circle")
+      //   .attr("r", function(d){return d.r} )
+      //   .attr("stroke","black")
+      //   .attr("fill", "white")
+   
+      // /* Create the text for each block */
+      // elemEnter.append("text")
+      //   .attr("dx", function(d){return -20})
+      //   .text(function(d){return d.abbrr})
 
   // append initial circles
   var circlesGroup = chartGroup.selectAll("circle")
@@ -140,34 +159,44 @@ d3.csv("data.csv").then(function(stateData, err) {
     .append("circle")
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
     .attr("cy", d => yLinearScale(d.healthcare))
-    .attr("r", 20)
+    .attr("r", 15)
     .attr("fill", "pink")
-    .attr("opacity", ".5");
+    .attr("opacity", ".5")
+    .style("text-anchor", "middle");
 
-  // append text
-  var texts = svg.selectAll(null)
-    .data(stateData)
-    .enter()
-    .append('text')
-    .text(d => d.abbr)
-    .attr('color', 'black')
-    .attr('font-size', 15);
+    //append text
+    var texts = circlesGroup.append("text")
+      .attr("dx", function(d){return})
+      .text(function(d){return d.abbr})
+      .attr("cx", d => xLinearScale(d[chosenXAxis]))
+      .attr("cy", d => yLinearScale(d.healthcare))
+      .attr('color', 'black')
+      .attr('font-size', 15)
 
-  // Reposition text on bubbles
-  let ticked = () => {
-    circlesGroup.attr('cx', (data) => {
-            return data.x
-        })
-        .attr('cy', (data) => {
-            return data.y
-        });
+//   // append text
+//   var texts = svg.selectAll(null)
+//     .data(stateData)
+//     .enter()
+//     .append('text')
+//     .text(d => d.abbr)
+//     .attr('color', 'black')
+//     .attr('font-size', 15);
 
-    texts.attr('x', (data) => {
-            return data.x
-        })
-        .attr('y', (data) => {
-            return data.y});
-}
+//   // Reposition text on bubbles
+//   let ticked = () => {
+//     circlesGroup.attr('cx', (data) => {
+//             return data.x
+//         })
+//         .attr('cy', (data) => {
+//             return data.y
+//         });
+
+//     texts.attr('x', (data) => {
+//             return data.x
+//         })
+//         .attr('y', (data) => {
+//             return data.y});
+// }
 
   // Create group for two x-axis labels
   var labelsGroup = chartGroup.append("g")
@@ -225,21 +254,21 @@ d3.csv("data.csv").then(function(stateData, err) {
         circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
         // changes classes to change bold text
-        if (chosenXAxis === "healthcare") {
+        if (chosenXAxis === "income") {
           povertyLabel
-            .classed("active", true)
-            .classed("inactive", false);
-          incomeLabel
             .classed("active", false)
             .classed("inactive", true);
+          incomeLabel
+            .classed("active", true)
+            .classed("inactive", false);
         }
         else {
           povertyLabel
-            .classed("active", false)
-            .classed("inactive", true);
-          incomeLabel
             .classed("active", true)
             .classed("inactive", false);
+          incomeLabel
+            .classed("active", false)
+            .classed("inactive", true);
         }
       }
     });
