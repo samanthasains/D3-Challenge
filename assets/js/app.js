@@ -53,13 +53,24 @@ function renderAxes(newXScale, xAxis) {
 
 // function used for updating circles group with a transition to
 // new circles
-function renderCircles(circlesGroup, newXScale, chosenXAxis) {
+function renderCircles(circles, newXScale, chosenXAxis) {
 
-  circlesGroup.transition()
+  circles.transition()
     .duration(1000)
     .attr("cx", d => newXScale(d[chosenXAxis]));
 
-  return circlesGroup;
+  return circles;
+}
+
+// function used for updating texts group with a transition to
+// new circles & texts location
+function renderTexts(texts, newXScale, chosenXAxis) {
+
+  texts.transition()
+    .duration(1000)
+    .attr("x", d => newXScale(d[chosenXAxis]));
+
+  return texts;
 }
 
 // function used for updating circles group with new tooltip
@@ -127,76 +138,30 @@ d3.csv("data.csv").then(function(stateData, err) {
   chartGroup.append("g")
     .call(leftAxis);
 
-    // // mystery
-    // let simulation = d3.forceSimulation()
-    // .force('x', d3.forceX(width/2).strength(0.5))
-    // .force('y', d3.forceY(height/2).strength(0.5))
-    // .force('collide', d3.forceCollide((data) => { return r(data.healthcare) + 1.5; }))
-      /* Define the data for the circles */
-      // var elem = svg.selectAll("g myCircleText")
-      //     .data(stateData)
-    
-      // /*Create and place the "blocks" containing the circle and the text */  
-      // var elemEnter = elem.enter() //this is chartGroup?
-      //   .append("g")
-      //   .attr("transform", function(d){return "translate("+d.x+",80)"})
-   
-      // /*Create the circle for each block */
-      // var circle = elemEnter.append("circle")
-      //   .attr("r", function(d){return d.r} )
-      //   .attr("stroke","black")
-      //   .attr("fill", "white")
-   
-      // /* Create the text for each block */
-      // elemEnter.append("text")
-      //   .attr("dx", function(d){return -20})
-      //   .text(function(d){return d.abbrr})
-
-  // append initial circles
-  var circlesGroup = chartGroup.selectAll("circle")
+  // wrap circles & texts
+  var circlesGroup = chartGroup.selectAll("g.dot")
     .data(stateData)
     .enter()
-    .append("circle")
+    .append("g")
+
+  // append initial circles
+  var circles = circlesGroup.append("circle")
+    .attr("class", "dot")
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
     .attr("cy", d => yLinearScale(d.healthcare))
-    .attr("r", 15)
-    .attr("fill", "pink")
-    .attr("opacity", ".5")
-    .style("text-anchor", "middle");
+    .attr("r", 13)
+    .attr("fill", "blue")
+    .attr("opacity", ".5");
 
     //append text
     var texts = circlesGroup.append("text")
       .attr("dx", function(d){return})
       .text(function(d){return d.abbr})
-      .attr("cx", d => xLinearScale(d[chosenXAxis]))
-      .attr("cy", d => yLinearScale(d.healthcare))
-      .attr('color', 'black')
-      .attr('font-size', 15)
-
-//   // append text
-//   var texts = svg.selectAll(null)
-//     .data(stateData)
-//     .enter()
-//     .append('text')
-//     .text(d => d.abbr)
-//     .attr('color', 'black')
-//     .attr('font-size', 15);
-
-//   // Reposition text on bubbles
-//   let ticked = () => {
-//     circlesGroup.attr('cx', (data) => {
-//             return data.x
-//         })
-//         .attr('cy', (data) => {
-//             return data.y
-//         });
-
-//     texts.attr('x', (data) => {
-//             return data.x
-//         })
-//         .attr('y', (data) => {
-//             return data.y});
-// }
+      .attr("x", d => xLinearScale(d[chosenXAxis]))
+      .attr("y", d => yLinearScale(d.healthcare)+5)
+      .attr('color', 'white')
+      .attr('font-size', 10)
+      .style("text-anchor", "middle")
 
   // Create group for two x-axis labels
   var labelsGroup = chartGroup.append("g")
@@ -223,7 +188,7 @@ d3.csv("data.csv").then(function(stateData, err) {
     .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .classed("axis-text", true)
-    .text("% of Population With Healthcare");
+    .text("% of Population Without Healthcare");
 
   // updateToolTip function above csv import
   var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
@@ -248,7 +213,10 @@ d3.csv("data.csv").then(function(stateData, err) {
         xAxis = renderAxes(xLinearScale, xAxis);
 
         // updates circles with new x values
-        circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis);
+        circles = renderCircles(circles, xLinearScale, chosenXAxis);
+
+        //update text with new x values
+        texts = renderTexts(texts, xLinearScale, chosenXAxis);
 
         // updates tooltips with new info
         circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
